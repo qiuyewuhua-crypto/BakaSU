@@ -247,6 +247,55 @@ void apply_kernelsu_rules()
     // allow all!
     ksu_allow(db, KERNEL_SU_DOMAIN, ALL, ALL, ALL);
 
+    // Static replacement for the runtime sepolicy the keymint injection module
+    // used to load from its sepolicy.rule. Handing the payload fd over to
+    // keystore2 and/or re-opening it from the target context needs the rules
+    // below; granting them while the policy is being built keeps the loaded
+    // policy sequence untouched (a runtime sepolicy apply would bump it).
+    // ksu_allow() takes exactly one permission name per call, so every
+    // multi-permission rule is spelled out one permission at a time.
+    ksu_allow(db, "system_file", "keystore", "unix_dgram_socket", "sendto");
+    ksu_allow(db, "keystore", "system_file", "unix_dgram_socket", "getattr");
+    ksu_allow(db, "keystore", "system_file", "unix_dgram_socket", "read");
+    ksu_allow(db, "keystore", "system_file", "unix_dgram_socket", "recvfrom");
+    ksu_allow(db, "keystore", "system_file", "file", "execute");
+    ksu_allow(db, "keystore", "system_file", "file", "getattr");
+    ksu_allow(db, "keystore", "system_file", "file", "map");
+    ksu_allow(db, "keystore", "system_file", "file", "read");
+    ksu_allow(db, "crash_dump", "keystore", "process", ALL);
+    ksu_allow(db, "keystore", "default_android_service", "service_manager", "find");
+    ksu_allow(db, "shell", "default_android_service", "service_manager", "find");
+
+    // same set for the app domains that drive key attestation queries
+    ksu_allow(db, "platform_app", "system_file", "unix_dgram_socket", "getattr");
+    ksu_allow(db, "platform_app", "system_file", "unix_dgram_socket", "read");
+    ksu_allow(db, "platform_app", "system_file", "unix_dgram_socket", "recvfrom");
+    ksu_allow(db, "system_app", "system_file", "unix_dgram_socket", "getattr");
+    ksu_allow(db, "system_app", "system_file", "unix_dgram_socket", "read");
+    ksu_allow(db, "system_app", "system_file", "unix_dgram_socket", "recvfrom");
+    ksu_allow(db, "system_file", "platform_app", "unix_dgram_socket", "sendto");
+    ksu_allow(db, "system_file", "system_app", "unix_dgram_socket", "sendto");
+    ksu_allow(db, "platform_app", "system_file", "unix_stream_socket", "getattr");
+    ksu_allow(db, "platform_app", "system_file", "unix_stream_socket", "read");
+    ksu_allow(db, "platform_app", "system_file", "unix_stream_socket", "write");
+    ksu_allow(db, "platform_app", "system_file", "unix_stream_socket", "getopt");
+    ksu_allow(db, "platform_app", "system_file", "unix_stream_socket", "setopt");
+    ksu_allow(db, "platform_app", "system_file", "unix_stream_socket", "shutdown");
+    ksu_allow(db, "system_app", "system_file", "unix_stream_socket", "getattr");
+    ksu_allow(db, "system_app", "system_file", "unix_stream_socket", "read");
+    ksu_allow(db, "system_app", "system_file", "unix_stream_socket", "write");
+    ksu_allow(db, "system_app", "system_file", "unix_stream_socket", "getopt");
+    ksu_allow(db, "system_app", "system_file", "unix_stream_socket", "setopt");
+    ksu_allow(db, "system_app", "system_file", "unix_stream_socket", "shutdown");
+    ksu_allow(db, "platform_app", "system_file", "file", "execute");
+    ksu_allow(db, "platform_app", "system_file", "file", "getattr");
+    ksu_allow(db, "platform_app", "system_file", "file", "map");
+    ksu_allow(db, "platform_app", "system_file", "file", "read");
+    ksu_allow(db, "system_app", "system_file", "file", "execute");
+    ksu_allow(db, "system_app", "system_file", "file", "getattr");
+    ksu_allow(db, "system_app", "system_file", "file", "map");
+    ksu_allow(db, "system_app", "system_file", "file", "read");
+
     // allow us do any ioctl
     if (db->policyvers >= POLICYDB_VERSION_XPERMS_IOCTL) {
         ksu_allowxperm(db, KERNEL_SU_DOMAIN, ALL, "blk_file", ALL);
