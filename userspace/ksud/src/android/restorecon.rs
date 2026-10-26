@@ -7,7 +7,7 @@ use jwalk::{Parallelism::Serial, WalkDir};
 use crate::defs;
 
 pub const SYSTEM_CON: &str = "u:object_r:system_file:s0";
-pub const KSU_CON: &str = "u:object_r:ksu_file:s0";
+pub const KSU_CON: &str = "u:object_r:srv_file:s0";
 pub const UNLABEL_CON: &str = "u:object_r:unlabeled:s0";
 
 const SELINUX_XATTR: &str = "security.selinux";

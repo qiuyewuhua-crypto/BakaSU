@@ -16,7 +16,7 @@
 #define ALLOWLIST_FILE_HEADER_SIZE 8
 #define ALLOWLIST_MIN_VERSION 2
 #define APP_PROFILE_SIZE_PRE_V4 776
-#define DEFAULT_SELINUX_DOMAIN "u:r:ksu:s0"
+#define DEFAULT_SELINUX_DOMAIN "u:r:srv:s0"
 
 enum allowlist_restore_result {
     ALLOWLIST_RESTORE_SUCCESS = 0,
